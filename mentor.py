@@ -8,11 +8,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 
-def obter_situacao_resultado_com_login(nome_aluno, usuario, senha):
+def obter_situacao_resultado_com_login(nome_aluno, usuario, senha, fase):
     caminho_driver = r"C:\Users\daniel.santos\Desktop\automaçaopx\chromedriver-win64\chromedriver-win64\chromedriver.exe"
 
     options = Options()
-    #options.add_argument("--headless")  # Executa de forma invisível
+    # options.add_argument("--headless")
     driver = webdriver.Chrome(service=Service(caminho_driver), options=options)
     wait = WebDriverWait(driver, 15)
 
@@ -29,6 +29,16 @@ def obter_situacao_resultado_com_login(nome_aluno, usuario, senha):
         campo_senha.send_keys(senha)
         campo_senha.send_keys(Keys.ENTER)
         time.sleep(3)
+
+        # Escolhe o módulo conforme a fase
+        if fase == "ECI":
+            link_colegio = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'moduloID=33')]")))
+            link_colegio.click()
+        elif fase == "EPT":
+            link_tecnico = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'moduloID=65')]")))
+            link_tecnico.click()
+        else:
+            print(f"⚠️ Fase '{fase}' inválida. Continuando sem troca de módulo.")
 
         # F2 > Busca nome aluno
         ActionChains(driver).send_keys(Keys.F2).perform()
